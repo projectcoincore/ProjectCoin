@@ -13,7 +13,7 @@ More information at [projectcoin.net](http://www.projectcoin.net) Visit our ANN 
 <tr><td>Name & ticker</td><td>ProjectCoin</td></tr>
 <tr><td>Consensus algorithm</td><td>PoW/POS</td></tr>
 <tr><td>POW phase duration</td><td>2000 blocks</td></tr>
-<tr><td>PoW block reward</td><td>Dynamic from 0.1 to 50 ProjectCoin</td></tr>
+<tr><td>PoW block reward</td><td>0.1 ProjectCoin</td></tr>
 <tr><td>Instamine protection</td><td>First 2000 blocks</td></tr>
 <tr><td>Hashing algorithm</td><td>Keccak</td></tr>
 <tr><td>Estimated ProjectCoin supply during POW</td><td>21,000,000</td></tr>
