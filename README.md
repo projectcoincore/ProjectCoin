@@ -5,7 +5,7 @@ ProjectCoin is a brand new digital currency that combines all the positive aspec
 The project brings tangible benefits not only to the digital world but also to the real one.
 
 
-More information at [projectcoin.net](http://www.projectcoin.net) Visit our ANN thread at [BitcoinTalk](http://www.bitcointalk.org), join ou group at [Discord] (https://discord.gg/S9adMgS).
+More information at [projectcoin.net](http://www.projectcoin.net) Visit our ANN thread at [BitcoinTalk](https://bitcointalk.org/index.php?topic=4934523), join ou group at [Discord] (https://discord.gg/sjWwU5U).
 
 ### Coin Specs
 
