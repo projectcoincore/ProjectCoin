@@ -26,6 +26,3 @@ More information at [projectcoin.net](http://www.projectcoin.net) Visit our ANN 
 <tr><td>Number of transaction confirmations</td><td>6</td></tr>
 <tr><td>Maturity</td><td>288 confirmations</td></tr>
 </table>
-
-
-![](doc/POW.png)
