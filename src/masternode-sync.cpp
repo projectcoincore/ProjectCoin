@@ -52,7 +52,7 @@ bool CMasternodeSync::IsBlockchainSynced()
 
     if (!pindex) return false;
 
-    if (pindex->nTime + 60 * 60 < GetTime())
+    if (pindex->nTime + 12 * 60 * 60 < GetTime())
         return false;
 
     fBlockchainSynced = true;
@@ -223,7 +223,7 @@ void CMasternodeSync::Process()
     if (tick++ % MASTERNODE_SYNC_TIMEOUT != 0) return;
 
     if (IsSynced()) {
-        /* 
+        /*
             Resync if we lose all masternodes from sleep/wake or failure to sync originally
         */
         if (IsSporkActive(SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT) && !mnodeman.CountEnabled()) {
@@ -245,8 +245,15 @@ void CMasternodeSync::Process()
         GetNextAsset();
 
     // sporks synced but blockchain is not, wait until we're almost at a recent block to continue
-    if (Params().NetworkID() != CBaseChainParams::REGTEST &&
-        !IsBlockchainSynced() && RequestedMasternodeAssets > MASTERNODE_SYNC_SPORKS) return;
+    bool wait_blockchain_sync =  Params().NetworkID() != CBaseChainParams::REGTEST
+                              && !IsBlockchainSynced()
+                              && RequestedMasternodeAssets > MASTERNODE_SYNC_SPORKS;
+
+    if(wait_blockchain_sync)
+    {
+        nAssetSyncStarted = GetTime();
+        return;
+    }
 
     TRY_LOCK(cs_vNodes, lockRecv);
     if (!lockRecv) return;

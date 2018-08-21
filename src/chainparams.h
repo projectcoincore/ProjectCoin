@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX Core developers
-// Copyright (c) 2017-2018 The XDNA Core developers
+// Copyright (c) 2018-2019 The ProjectCoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -28,7 +28,7 @@ struct CDNSSeedData {
 
 /**
  * CChainParams defines various tweakable parameters of a given instance of the
- * XDNA system. There are three: the main network on which people trade goods
+ * ProjectCoin system. There are three: the main network on which people trade goods
  * and services, the public test network which gets reset from time to time and
  * a regression test mode which is intended for private networks only. It has
  * minimal difficulty to ensure that blocks can be found instantly.
@@ -47,21 +47,19 @@ public:
         MAX_BASE58_TYPES
     };
 
-    using SubsidySwitchPoints = std::map<int64_t, CAmount>;
-
     const uint256& HashGenesisBlock() const { return hashGenesisBlock; }
     const MessageStartChars& MessageStart() const { return pchMessageStart; }
     const std::vector<unsigned char>& AlertKey() const { return vAlertPubKey; }
 
-    const std::vector<unsigned char>& xDNADevKey() const { return vXDNADevKey; }
-    const std::vector<unsigned char>& xDNAFundKey() const { return vXDNAFundKey; }
-    int GetDevFee() const { return nDevFee; }
-    int GetFundFee() const { return nFundFee; }
+    // const std::vector<unsigned char>& ProjectCoinDevKey() const { return vProjectCoinDevKey; }
+    // const std::vector<unsigned char>& ProjectCoinFundKey() const { return vProjectCoinFundKey; }
+    // int GetDevFee() const { return nDevFee; }
+    // int GetFundFee() const { return nFundFee; }
 
     int GetDefaultPort() const { return nDefaultPort; }
     const uint256& ProofOfWorkLimit() const { return bnProofOfWorkLimit; }
     const uint256& StartWork() const { return bnStartWork; }
-    CAmount SubsidyValue(SubsidySwitchPoints::key_type level) const;
+
     /** Used to check majorities for block version upgrade */
     int EnforceBlockUpgradeMajority() const { return nEnforceBlockUpgradeMajority; }
     int RejectBlockOutdatedMajority() const { return nRejectBlockOutdatedMajority; }
@@ -83,8 +81,9 @@ public:
     /** Make standard checks */
     bool RequireStandard() const { return fRequireStandard; }
     int64_t TargetSpacing() const { return nTargetSpacing; }
+    int64_t TargetSpacingSlowLaunch() const { return nTargetSpacingSlowLaunch; }
     /** Instamine Prevention, Zero reward to block **/
-    int ANTI_INSTAMINE_TIME() const { return nAntiInstamineTime; }
+    // int ANTI_INSTAMINE_TIME() const { return nAntiInstamineTime; }
     int COINBASE_MATURITY() const { return nMaturity; }
     CAmount MaxMoneyOut() const { return nMaxMoneyOut; }
     /** The masternode count that we will allow the see-saw reward payments to be off by */
@@ -110,8 +109,7 @@ public:
     int ModifierUpgradeBlock() const { return nModifierUpdateBlock; }
     int LAST_POW_BLOCK() const { return nLastPOWBlock; }
     int StartMNPaymentsBlock() const {return nStartMasternodePaymentsBlock; }
-    
-    const SubsidySwitchPoints& GetSubsidySwitchPoints() const { return subsidySwitchPoints; }
+
 
 protected:
     CChainParams() {}
@@ -120,20 +118,20 @@ protected:
     MessageStartChars pchMessageStart;
     //! Raw pub key bytes for the broadcast alert signing key.
     std::vector<unsigned char> vAlertPubKey;
-    std::vector<unsigned char> vXDNADevKey;
-    std::vector<unsigned char> vXDNAFundKey;
-    int nDevFee;
-    int nFundFee;
+    // std::vector<unsigned char> vProjectCoinDevKey;
+    // std::vector<unsigned char> vProjectCoinFundKey;
+    // int nDevFee;
+    // int nFundFee;
     int nDefaultPort;
     uint256 bnProofOfWorkLimit;
     uint256 bnStartWork;
     int nMaxReorganizationDepth;
-    SubsidySwitchPoints subsidySwitchPoints;
     int nEnforceBlockUpgradeMajority;
     int nRejectBlockOutdatedMajority;
     int nToCheckBlockUpgradeMajority;
     int64_t nTargetSpacing;
-    int nAntiInstamineTime;
+    int64_t nTargetSpacingSlowLaunch;
+    // int nAntiInstamineTime;
     int nLastPOWBlock;
     int nStartMasternodePaymentsBlock;
     int nMasternodeCountDrift;

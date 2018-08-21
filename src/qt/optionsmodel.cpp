@@ -1,12 +1,12 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The XDNA Core developers
+// Copyright (c) 2018-2019 The ProjectCoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/xdna-config.h"
+#include "config/projectcoin-config.h"
 #endif
 
 #include "optionsmodel.h"
@@ -62,7 +62,7 @@ void OptionsModel::Init()
 
     // Display
     if (!settings.contains("nDisplayUnit"))
-        settings.setValue("nDisplayUnit", BitcoinUnits::XDNA);
+        settings.setValue("nDisplayUnit", BitcoinUnits::PRJ);
     nDisplayUnit = settings.value("nDisplayUnit").toInt();
 
     if (!settings.contains("strThirdPartyTxUrls"))
@@ -76,11 +76,11 @@ void OptionsModel::Init()
     if (!settings.contains("nObfuscationRounds"))
         settings.setValue("nObfuscationRounds", 2);
 
-    if (!settings.contains("nAnonymizeXDnaAmount"))
-        settings.setValue("nAnonymizeXDnaAmount", 1000);
-    
+    if (!settings.contains("nAnonymizePrjAmount"))
+        settings.setValue("nAnonymizePrjAmount", 1000);
+
     nObfuscationRounds = settings.value("nObfuscationRounds").toLongLong();
-    nAnonymizeXDnaAmount = settings.value("nAnonymizeXDnaAmount").toLongLong();
+    nAnonymizePrjAmount = settings.value("nAnonymizePrjAmount").toLongLong();
 
     if (!settings.contains("fShowMasternodesTab"))
         settings.setValue("fShowMasternodesTab", masternodeConfig.getCount());
@@ -147,8 +147,8 @@ void OptionsModel::Init()
 
     if (settings.contains("nObfuscationRounds"))
         SoftSetArg("-obfuscationrounds", settings.value("nObfuscationRounds").toString().toStdString());
-    if (settings.contains("nAnonymizeXDnaAmount"))
-        SoftSetArg("-anonymizexdnaamount", settings.value("nAnonymizeXDnaAmount").toString().toStdString());
+    if (settings.contains("nAnonymizePrjAmount"))
+        SoftSetArg("-anonymizeprojectcoinamount", settings.value("nAnonymizePrjAmount").toString().toStdString());
 
     language = settings.value("language").toString();
 }
@@ -159,7 +159,7 @@ void OptionsModel::Reset()
 
     // Remove all entries from our QSettings object
     settings.clear();
-    resetSettings = true; // Needed in xdna.cpp during shotdown to also remove the window positions
+    resetSettings = true; // Needed in projectcoin.cpp during shotdown to also remove the window positions
 
     // default setting for OptionsModel::StartAtStartup - disabled
     if (GUIUtil::GetStartOnSystemStartup())
@@ -228,8 +228,8 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
             return settings.value("nThreadsScriptVerif");
         case ObfuscationRounds:
             return QVariant(nObfuscationRounds);
-        case AnonymizeXDnaAmount:
-            return QVariant(nAnonymizeXDnaAmount);
+        case AnonymizePrjAmount:
+            return QVariant(nAnonymizePrjAmount);
         case Listen:
             return settings.value("fListen");
         default:
@@ -338,10 +338,10 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
             settings.setValue("nObfuscationRounds", nObfuscationRounds);
             emit obfuscationRoundsChanged(nObfuscationRounds);
             break;
-        case AnonymizeXDnaAmount:
-            nAnonymizeXDnaAmount = value.toInt();
-            settings.setValue("nAnonymizeXDnaAmount", nAnonymizeXDnaAmount);
-            emit anonymizeXDnaAmountChanged(nAnonymizeXDnaAmount);
+        case AnonymizePrjAmount:
+            nAnonymizePrjAmount = value.toInt();
+            settings.setValue("nAnonymizePrjAmount", nAnonymizePrjAmount);
+            emit anonymizePrjAmountChanged(nAnonymizePrjAmount);
             break;
         case CoinControlFeatures:
             fCoinControlFeatures = value.toBool();

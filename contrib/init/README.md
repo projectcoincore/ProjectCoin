@@ -1,10 +1,10 @@
 Sample configuration files for:
 
-SystemD: xdnad.service
-Upstart: xdnad.conf
-OpenRC:  xdnad.openrc
-         xdnad.openrcconf
-CentOS:  xdnad.init
+SystemD: projectcoind.service
+Upstart: projectcoind.conf
+OpenRC:  projectcoind.openrc
+         projectcoind.openrcconf
+CentOS:  projectcoind.init
 
 have been made available to assist packagers in creating node packages here.
 

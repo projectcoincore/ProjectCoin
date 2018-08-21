@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The XDNA Core developers
+// Copyright (c) 2018-2019 The ProjectCoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -41,7 +41,7 @@ using namespace boost;
 using namespace std;
 
 #if defined(NDEBUG)
-#error "XDNA cannot be compiled without assertions."
+#error "ProjectCoin cannot be compiled without assertions."
 #endif
 
 /**
@@ -69,10 +69,10 @@ bool fVerifyingBlocks = false;
 unsigned int nCoinCacheSize = 5000;
 bool fAlerts = DEFAULT_ALERTS;
 
-unsigned int nStakeMinAge = 60 * 60;
+unsigned int nStakeMinAge = 4 * 60 * 60;
 int64_t nReserveBalance = 0;
 
-/** Fees smaller than this (in uxdna) are considered zero fee (for relaying and mining)
+/** Fees smaller than this (in uprojectcoin) are considered zero fee (for relaying and mining)
  * We are ~100 times smaller then bitcoin now (2015-06-23), set minRelayTxFee only 10 times higher
  * so it's still 10 times lower comparing to bitcoin.
  */
@@ -1619,61 +1619,45 @@ double ConvertBitsToDouble(unsigned int nBits)
 
 CAmount GetBlockValue(int nHeight)
 {
-    if (nHeight == 0) {
-        return 971712 * COIN;
-    } else if (nHeight < Params().ANTI_INSTAMINE_TIME()) {
-        return 1 * COIN;
+  // anti instamine
+      int64_t nSubsidy = 0;
 
-      // POS Year 1
-    } else if (nHeight <= 1965600 && nHeight > Params().LAST_POW_BLOCK()) {
-        return 57 * COIN;
-      // POS Year 2
-    } else if (nHeight <= 2491200 && nHeight >= 1965601) {
-        return 53 * COIN;
-      // POS Year 3
-    } else if (nHeight <= 3016800 && nHeight >= 2491201) {
-        return 49 * COIN;
-      // POS Year 4
-    } else if (nHeight <= 3542400 && nHeight >= 3016801) {
-        return 45 * COIN;
-      // POS Year 5
-    } else if (nHeight <= 4068000 && nHeight >= 3542401) {
-        return 41 * COIN;
-      // POS Year 6
-    } else if (nHeight <= 4593600 && nHeight >= 4068001) {
-        return 37 * COIN;
-      // POS Year 7
-    } else if (nHeight <= 5119200 && nHeight >= 4593601) {
-        return 33 * COIN;
-      // POS Year 8
-    } else if (nHeight <= 5644800 && nHeight >= 5119201) {
-        return 29 * COIN;
-      // POS Year 9
-    } else if (nHeight <= 6170400 && nHeight >= 5644801) {
-        return 25 * COIN;
-      // POS Year 10
-    } else if (nHeight <= 6696000 && nHeight >= 6170401) {
-        return 21 * COIN;
-      // POS Year 11
-    } else if (nHeight <= 7221600 && nHeight >= 6696001) {
-        return 17 * COIN;
-      // POS Year 12
-    } else if (nHeight <= 7747200 && nHeight >= 7221601) {
-        return 13 * COIN;
-      // POS Year 13
-    } else if (nHeight <= 8272800 && nHeight >= 7747201) {
-        return 9 * COIN;
-      // POS Year 14
-    } else if (nHeight <= 8798400 && nHeight >= 8272801) {
-        return 5 * COIN;
-      // POS Year 15
-    } else if (nHeight >= 8798401) {
-        return 1 * COIN;
+    if ( nHeight == 0 ) {    // premine
+      nSubsidy = 500000 * COIN;
+    } else if (nHeight <= 2000) {
+      nSubsidy = 0.1 * COIN;
+    } else if (nHeight > 2000 && nHeight <= 30000) {
+      nSubsidy = 10 * COIN;
+    } else if (nHeight > 30000 && nHeight <= 60000) {
+      nSubsidy = 15 * COIN;
+    } else if (nHeight > 60000 && nHeight <= 100000) {
+      nSubsidy = 30 * COIN;
+    } else if (nHeight > 100000 && nHeight <= 180000) {
+      nSubsidy = 50 * COIN;
+    } else if (nHeight > 180000 && nHeight <= 300000) {
+      nSubsidy = 25 * COIN;
+    } else if (nHeight > 300000 && nHeight <= 500000) {
+      nSubsidy = 13 * COIN;
+    } else if (nHeight > 500000 && nHeight <= 750000) {
+      nSubsidy = 7 * COIN;
+    } else if (nHeight > 750000 && nHeight <= 1250000) {
+      nSubsidy = 4 * COIN;
+    } else if (nHeight > 1250000 && nHeight <= 3000000) {
+      nSubsidy = 2 * COIN;
+    } else {
+      nSubsidy = 0.1 * COIN;
     }
 
-    int64_t netHashRate = chainActive.GetNetworkHashPS(24, nHeight);
+    // Check if we reached the coin max supply.
+    int64_t nMoneySupply = chainActive.Tip()->nMoneySupply;
 
-    return Params().SubsidyValue(netHashRate);
+      if (nMoneySupply + nSubsidy >= Params().MaxMoneyOut())
+        nSubsidy = Params().MaxMoneyOut() - nMoneySupply;
+
+    if (nMoneySupply >= Params().MaxMoneyOut())
+      nSubsidy = 0;
+
+    return nSubsidy;
 }
 
 int64_t GetMasternodePayment(int nHeight, unsigned mnlevel, int64_t blockValue)
@@ -1684,13 +1668,13 @@ int64_t GetMasternodePayment(int nHeight, unsigned mnlevel, int64_t blockValue)
     switch(mnlevel)
     {
         case 1:
-            return blockValue / 100 * 3;
+            return blockValue * 0.3;
 
         case 2:
-            return blockValue / 100 * 9;
+            return blockValue * 0.3;
 
         case 3:
-            return blockValue / 100 * 15;
+            return blockValue * 0.3;
     }
 
     return 0;
@@ -2079,7 +2063,7 @@ static CCheckQueue<CScriptCheck> scriptcheckqueue(128);
 
 void ThreadScriptCheck()
 {
-    RenameThread("xdna-scriptch");
+    RenameThread("projectcoin-scriptch");
     scriptcheckqueue.Thread();
 }
 
@@ -3120,8 +3104,11 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
 
     if (block.IsProofOfStake()) {
         // Coinbase output should be empty if proof-of-stake block
-        if (block.vtx[0].vout.size() != 1 || !block.vtx[0].vout[0].IsEmpty())
+        if (!block.vtx[0].vout[0].IsEmpty())
             return state.DoS(100, error("CheckBlock() : coinbase output not empty for proof-of-stake block"));
+
+        if (block.vtx[0].vout.size() != 1)
+            return state.DoS(100, error("CheckBlock() : block.vtx[0].vout.size() != 1"));
 
         // Second transaction must be coinstake, the rest must not be
         if (block.vtx.empty() || !block.vtx[1].IsCoinStake())
@@ -3130,52 +3117,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
             if (block.vtx[i].IsCoinStake())
                 return state.DoS(100, error("CheckBlock() : more than one coinstake"));
     }
-    else {
-            int nHeight = 0;
-            CBlockIndex* pindexPrev = chainActive.Tip();
-            if (pindexPrev == NULL)
-                nHeight = 0;
-            else
-                if (pindexPrev->GetBlockHash() == block.hashPrevBlock)
-                    nHeight = pindexPrev->nHeight + 1;
-
-            if(nHeight > 1) { // exclude premine
-                // The first transaction must have Fund and Dev scripts.
-                CScript scriptDevPubKeyIn  = CScript() << Params().xDNADevKey() << OP_CHECKSIG;
-                CScript scriptFundPubKeyIn = CScript() << Params().xDNAFundKey() << OP_CHECKSIG;
-                CTxDestination DevAddress;
-                CTxDestination FundAddress;
-                ExtractDestination(scriptDevPubKeyIn, DevAddress);
-                ExtractDestination(scriptFundPubKeyIn, FundAddress);
-
-            if (block.vtx[0].vout.size() < 3)
-                return state.DoS(100, error("CheckBlock() : coinbase do not have the dev or fund reward."),
-                REJECT_INVALID, "bad-cb-reward-missing");
-
-            int FoudIndex = -1;
-            int DevIndex = -1;
-
-            for (unsigned int indx = 0; indx < block.vtx[0].vout.size(); ++indx) {
-                CTxDestination tmp_address;
-                ExtractDestination(block.vtx[0].vout[indx].scriptPubKey, tmp_address);
-                if (tmp_address == DevAddress)
-                    DevIndex = indx;
-                if (tmp_address == FundAddress)
-                    FoudIndex = indx;
-            }
-
-            if(FoudIndex == -1 || DevIndex == -1)
-                return state.DoS(100, error("CheckBlock() : coinbase do not have the dev or fund reward (vout)."),
-                REJECT_INVALID, "bad-cb-reward-missing");
-
-            CAmount block_value = GetBlockValue(nHeight - 1);
-
-            if (block.vtx[0].vout[DevIndex].nValue < block_value * Params().GetDevFee() / 100 || block.vtx[0].vout[FoudIndex].nValue < block_value * Params().GetFundFee() / 100)
-                return state.DoS(100, error("CheckBlock() : coinbase do not have the enough reward for dev or fund."),
-                REJECT_INVALID, "bad-cb-reward-invalid");
-
-        }
-    }
+    
 
     // ----------- swiftTX transaction scanning -----------
     if (IsSporkActive(SPORK_2_SWIFTTX_BLOCK_FILTERING)) {
@@ -3210,7 +3152,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
                 nHeight = (*mi).second->nHeight + 1;
         }
 
-        // XDNA
+        // ProjectCoin
         // It is entierly possible that we don't have enough data and this could fail
         // (i.e. the block could indeed be valid). Store the block for later consideration
         // but issue an initial reject message.

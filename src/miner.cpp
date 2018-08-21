@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The XDNA Core developers
+// Copyright (c) 2018-2019 The ProjectCoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -31,7 +31,7 @@ using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-// XDNAMiner
+// ProjectCoinMiner
 //
 
 //
@@ -105,7 +105,12 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
     txNew.vin[0].prevout.SetNull();
     txNew.vout.resize(1);
     txNew.vout[0].SetEmpty();
-//    txNew.vout[0].scriptPubKey = scriptPubKeyIn;
+
+    LogPrintf("CreateNewBlock() : chainActive.Height() = %s \n", chainActive.Height());
+    if (chainActive.Height() >= Params().LAST_POW_BLOCK()) {
+      txNew.vout[0].scriptPubKey = scriptPubKeyIn;
+
+    }
 
     pblock->vtx.push_back(txNew);
 
@@ -127,7 +132,10 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
             unsigned int nTxNewTime = 0;
             if (pwallet->CreateCoinStake(*pwallet, pblock->nBits, nSearchTime - nLastCoinStakeSearchTime, txCoinStake, nTxNewTime)) {
                 pblock->nTime = nTxNewTime;
-//                pblock->vtx[0].vout[0].SetEmpty();
+
+                LogPrintf("CreateNewBlock() if fProofOfStake: chainActive.Height() = %s \n", chainActive.Height());
+                pblock->vtx[0].vout[0].SetEmpty();
+
                 pblock->vtx.push_back(CTransaction(txCoinStake));
                 fStakeFound = true;
             }
@@ -328,45 +336,33 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
             }
         }
 
-        CAmount block_value = GetBlockValue(nHeight - 1);
-
         txNew.vin[0].scriptSig = CScript() << nHeight << OP_0;
-
+        CAmount block_value = GetBlockValue(nHeight - 1);
         // Compute final transaction.
         if (!fProofOfStake) {
+
             txNew.vout[0].nValue       = block_value + nFees;
             txNew.vout[0].scriptPubKey = scriptPubKeyIn;
             pblocktemplate->vTxFees[0] = -nFees;
-        }
 
-        pblock->vtx[0] = txNew;
+            pblock->vtx[0] = txNew;
 
-        if(nHeight > 1) { // exclude premine
+            if(nHeight > 1) { // exclude premine
 
-            auto reward_tx_idx = fProofOfStake ? 1 : 0;
+                auto reward_tx_idx = fProofOfStake ? 1 : 0;
 
-            CMutableTransaction txReward{pblock->vtx[reward_tx_idx]};
+                CMutableTransaction txReward{pblock->vtx[reward_tx_idx]};
 
-            auto reward_out_idx = txReward.vout.size() - 1;
+                auto reward_out_idx = txReward.vout.size() - 1;
 
-            // Masternode payments
-            auto mn_reward = masternodePayments.FillBlockPayee(txReward, block_value, fProofOfStake);
+                // Masternode payments
+                auto mn_reward = masternodePayments.FillBlockPayee(txReward, block_value, fProofOfStake);
 
-            txReward.vout[reward_out_idx].nValue -= mn_reward;
+                txReward.vout[reward_out_idx].nValue -= mn_reward;
 
-            // XDNA fees
-            CScript scriptDevPubKeyIn  = CScript{} << Params().xDNADevKey() << OP_CHECKSIG;
-            CScript scriptFundPubKeyIn = CScript{} << Params().xDNAFundKey() << OP_CHECKSIG;
+                pblock->vtx[reward_tx_idx] = txReward;
+            }
 
-            auto vDevReward  = block_value * Params().GetDevFee() / 100;
-            auto vFundReward = block_value * Params().GetFundFee() / 100;
-
-            txReward.vout.emplace_back(vDevReward, scriptDevPubKeyIn);
-            txReward.vout.emplace_back(vFundReward, scriptFundPubKeyIn);
-
-            txReward.vout[reward_out_idx].nValue -= (vDevReward + vFundReward);
-
-            pblock->vtx[reward_tx_idx] = txReward;
         }
 
         nLastBlockTx = nBlockTx;
@@ -382,10 +378,13 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
         pblocktemplate->vTxSigOps[0] = GetLegacySigOpCount(pblock->vtx[0]);
 
         CValidationState state;
-        if (!TestBlockValidity(state, *pblock, pindexPrev, false, false)) {
-            LogPrintf("CreateNewBlock() : TestBlockValidity failed\n");
-            mempool.clear();
-            return NULL;
+        LogPrintf("CreateNewBlock() if CValidationState: chainActive.Height() = %s \n", chainActive.Height());
+        if (chainActive.Height() < Params().LAST_POW_BLOCK()) {
+          if (!TestBlockValidity(state, *pblock, pindexPrev, false, false)) {
+              LogPrintf("CreateNewBlock() : TestBlockValidity failed\n");
+              mempool.clear();
+              return NULL;
+          }
         }
     }
 
@@ -437,7 +436,7 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     {
         LOCK(cs_main);
         if (pblock->hashPrevBlock != chainActive.Tip()->GetBlockHash())
-            return error("XDNAMiner : generated block is stale");
+            return error("ProjectCoinMiner : generated block is stale");
     }
 
     // Remove key from key pool
@@ -452,7 +451,7 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     // Process this block the same as if we had received it from another node
     CValidationState state;
     if (!ProcessNewBlock(state, NULL, pblock))
-        return error("XDNAMiner : ProcessNewBlock, block not accepted");
+        return error("ProjectCoinMiner : ProcessNewBlock, block not accepted");
 
     for (CNode* node : vNodes) {
         node->PushInventory(CInv(MSG_BLOCK, pblock->GetHash()));
@@ -467,9 +466,9 @@ bool fGenerateBitcoins = false;
 
 void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
 {
-    LogPrintf("XDNAMiner started\n");
+    LogPrintf("ProjectCoinMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
-    RenameThread("xdna-miner");
+    RenameThread("projectcoin-miner");
 
     // Each thread has its own key and counter
     CReserveKey reservekey(pwallet);
@@ -542,7 +541,7 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
             continue;
         }
 
-        LogPrintf("Running XDNAMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
+        LogPrintf("Running ProjectCoinMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
             ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
         //

@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2016 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The XDNA Core developers
+// Copyright (c) 2018-2019 The ProjectCoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -319,7 +319,7 @@ bool CActiveMasternode::GetMasterNodeVin(CTxIn& vin, CPubKey& pubkey, CKey& secr
             if(out.tx->GetHash() != txHash || out.i != outputIndex)
                 continue;
 
-            if(!CMasternode::Level(out.tx->vout[out.i].nValue))
+            if(!CMasternode::Level(out.tx->vout[out.i].nValue, chainActive.Height()))
                 continue;
 
             selectedOutput = &out;
@@ -339,14 +339,14 @@ bool CActiveMasternode::GetMasterNodeVin(CTxIn& vin, CPubKey& pubkey, CKey& secr
 
         selectedOutput = &possibleCoins[0];
 
-        auto selected_level = CMasternode::Level(selectedOutput->tx->vout[selectedOutput->i].nValue);
+        auto selected_level = CMasternode::Level(selectedOutput->tx->vout[selectedOutput->i].nValue, chainActive.Height());
 
         for(auto& out : possibleCoins) {
 
             if(selected_level == 3u)
                 break;
 
-            if(CMasternode::Level(out.tx->vout[out.i].nValue) > selected_level)
+            if(CMasternode::Level(out.tx->vout[out.i].nValue, chainActive.Height()) > selected_level)
                 selectedOutput = &out;
         }
     }

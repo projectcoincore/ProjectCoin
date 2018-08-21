@@ -2,17 +2,17 @@ Multi masternode config
 =======================
 
 The multi masternode config allows you to control multiple masternodes from a single wallet. The wallet needs to have a valid collateral output of coins for each masternode type. To use this, place a file named masternode.conf in the data directory of your install:
- * Windows: %APPDATA%\XDNA\
- * Mac OS: ~/Library/Application Support/XDNA/
- * Unix/Linux: ~/.xdna/
+ * Windows: %APPDATA%\ProjectCoin\
+ * Mac OS: ~/Library/Application Support/ProjectCoin/
+ * Unix/Linux: ~/.projectcoin/
 
 The new masternode.conf format consists of a space seperated text file. Each line consisting of an alias, IP address followed by port, masternode private key, collateral output transaction id, collateral output index, donation address and donation percentage (the latter two are optional and should be in format "address:percentage").
 
 Example:
 ```
-mn1 127.0.0.2:1945 93HaYBVUCYjEMeeH1Y4sBGLALQZE1Yc1K64xiqgX37tGBDQL8Xg 2bcd3c84c84f87eaa86e4e56834c92927a07f9e18718810b92e0d0324456a67c 0
-mn2 127.0.0.3:1945 93WaAb3htPJEV8E9aQcN23Jt97bPex7YvWfgMDTUdWJvzmrMqey aa9f1034d973377a5e733272c3d0eced1de22555ad45d6b24abadff8087948d4 0 7gnwGHt17heGpG9Crfeh4KGpYNFugPhJdh:33
-mn3 127.0.0.4:1945 92Da1aYg6sbenP6uwskJgEY2XWB5LwJ7bXRqc3UPeShtHWJDjDv db478e78e3aefaa8c12d12ddd0aeace48c3b451a8b41c570d0ee375e2a02dfd9 1 7gnwGHt17heGpG9Crfeh4KGpYNFugPhJdh
+mn1 127.0.0.2:11111 93HaYBVUCYjEMeeH1Y4sBGLALQZE1Yc1K64xiqgX37tGBDQL8Xg 2bcd3c84c84f87eaa86e4e56834c92927a07f9e18718810b92e0d0324456a67c 0
+mn2 127.0.0.3:11111 93WaAb3htPJEV8E9aQcN23Jt97bPex7YvWfgMDTUdWJvzmrMqey aa9f1034d973377a5e733272c3d0eced1de22555ad45d6b24abadff8087948d4 0 7gnwGHt17heGpG9Crfeh4KGpYNFugPhJdh:33
+mn3 127.0.0.4:11111 92Da1aYg6sbenP6uwskJgEY2XWB5LwJ7bXRqc3UPeShtHWJDjDv db478e78e3aefaa8c12d12ddd0aeace48c3b451a8b41c570d0ee375e2a02dfd9 1 7gnwGHt17heGpG9Crfeh4KGpYNFugPhJdh
 ```
 
 In the example above:

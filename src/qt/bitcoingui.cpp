@@ -1,7 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The XDNA Core developers
+// Copyright (c) 2018-2019 The ProjectCoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -121,9 +121,9 @@ this->setStyleSheet(GUIUtil::loadStyleSheet());
 
 GUIUtil::restoreWindowGeometry("nWindow", QSize(1065, 670), this);
 //this->setFixedSize(1065,670);
-QFontDatabase::addApplicationFont(":/fonts/xdna_font");
+QFontDatabase::addApplicationFont(":/fonts/projectcoin_font");
 
-QString windowTitle = tr("XDNA Core") + " - ";
+QString windowTitle = tr("ProjectCoin Core") + " - ";
 #ifdef ENABLE_WALLET
     /* if compiled with wallet support, -disablewallet can still disable the wallet */
     enableWallet = !GetBoolArg("-disablewallet", false);
@@ -200,11 +200,11 @@ QString windowTitle = tr("XDNA Core") + " - ";
     labelBlocksIcon->setFixedSize(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE);
 
     if (enableWallet) {
-        
+
         frameBlocksLayout->addWidget(labelEncryptionIcon);
     }
-    
-   // frameBlocksLayout->addWidget(labelStakingIcon);
+
+    frameBlocksLayout->addWidget(labelStakingIcon);
     frameBlocksLayout->addWidget(labelBlocksIcon);
     frameBlocksLayout->addWidget(labelConnectionsIcon);
     frameBlocksLayout->setAlignment(Qt::AlignRight);
@@ -259,7 +259,7 @@ QString windowTitle = tr("XDNA Core") + " - ";
     connect(openMNConfEditorAction, SIGNAL(triggered()), rpcConsole, SLOT(showMNConfEditor()));
     connect(showBackupsAction, SIGNAL(triggered()), rpcConsole, SLOT(showBackups()));
     connect(labelConnectionsIcon, SIGNAL(clicked()), this, SLOT(showPeers()));
-  
+
 
     // Get restart command-line parameters and handle restart
     connect(rpcConsole, SIGNAL(handleRestart(QStringList)), this, SLOT(handleRestart(QStringList)));
@@ -278,15 +278,15 @@ QString windowTitle = tr("XDNA Core") + " - ";
 
     // Subscribe to notifications from core
     subscribeToCoreSignals();
-  
+
    //will be activate when pow ends
-   /*
+
    labelStakingIcon->hide();
    QTimer* timerStakingIcon = new QTimer(labelStakingIcon);
    connect(timerStakingIcon, SIGNAL(timeout()), this, SLOT(setStakingStatus()));
    timerStakingIcon->start(10000);
    setStakingStatus();
-   */
+
 }
 
 BitcoinGUI::~BitcoinGUI()
@@ -306,7 +306,7 @@ BitcoinGUI::~BitcoinGUI()
 void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 {
     QActionGroup* tabGroup = new QActionGroup(this);
- 
+
     overviewAction = new QAction(QIcon(":/icons/overview"), "", this);
     overviewAction->setStatusTip(tr("Show general overview of wallet"));
     overviewAction->setToolTip(overviewAction->statusTip());
@@ -317,9 +317,9 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     overviewAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
 #endif
     tabGroup->addAction(overviewAction);
-    
+
     sendCoinsAction = new QAction(QIcon(":/icons/send"), "", this);
-    sendCoinsAction->setStatusTip(tr("Send coins to a XDNA address"));
+    sendCoinsAction->setStatusTip(tr("Send coins to a ProjectCoin address"));
     sendCoinsAction->setToolTip(sendCoinsAction->statusTip());
     sendCoinsAction->setCheckable(true);
 #ifdef Q_OS_MAC
@@ -328,9 +328,9 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
 #endif
     tabGroup->addAction(sendCoinsAction);
-   
+
     receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), "", this);
-    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and XDNA: URIs)"));
+    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and ProjectCoin: URIs)"));
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
     receiveCoinsAction->setCheckable(true);
 #ifdef Q_OS_MAC
@@ -399,8 +399,8 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     quitAction->setStatusTip(tr("Quit application"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
-    aboutAction = new QAction(networkStyle->getAppIcon(), tr("&About XDNA Core"), this);
-    aboutAction->setStatusTip(tr("Show information about XDNA Core"));
+    aboutAction = new QAction(networkStyle->getAppIcon(), tr("&About ProjectCoin Core"), this);
+    aboutAction->setStatusTip(tr("Show information about ProjectCoin Core"));
     aboutAction->setMenuRole(QAction::AboutRole);
 #if QT_VERSION < 0x050000
     aboutQtAction = new QAction(QIcon(":/trolltech/qmessagebox/images/qtlogo-64.png"), tr("About &Qt"), this);
@@ -410,7 +410,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     aboutQtAction->setStatusTip(tr("Show information about Qt"));
     aboutQtAction->setMenuRole(QAction::AboutQtRole);
     optionsAction = new QAction(QIcon(":/icons/options"), tr("&Options..."), this);
-    optionsAction->setStatusTip(tr("Modify configuration options for XDNA"));
+    optionsAction->setStatusTip(tr("Modify configuration options for ProjectCoin"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
     toggleHideAction = new QAction(networkStyle->getAppIcon(), tr("&Show / Hide"), this);
     toggleHideAction->setStatusTip(tr("Show or hide the main Window"));
@@ -426,9 +426,9 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     unlockWalletAction->setToolTip(tr("Unlock wallet"));
     lockWalletAction = new QAction(tr("&Lock Wallet"), this);
     signMessageAction = new QAction(QIcon(":/icons/edit"), tr("Sign &message..."), this);
-    signMessageAction->setStatusTip(tr("Sign messages with your XDNA addresses to prove you own them"));
+    signMessageAction->setStatusTip(tr("Sign messages with your ProjectCoin addresses to prove you own them"));
     verifyMessageAction = new QAction(QIcon(":/icons/transaction_0"), tr("&Verify message..."), this);
-    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified XDNA addresses"));
+    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified ProjectCoin addresses"));
     bip38ToolAction = new QAction(QIcon(":/icons/key"), tr("&BIP38 tool"), this);
     bip38ToolAction->setToolTip(tr("Encrypt and decrypt private keys using a passphrase"));
     multiSendAction = new QAction(QIcon(":/icons/edit"), tr("&MultiSend"), this);
@@ -465,7 +465,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     multisigSignAction->setStatusTip(tr("Sign with a multisignature address"));
 
     openAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_FileIcon), tr("Open &URI..."), this);
-    openAction->setStatusTip(tr("Open a XDNA: URI or payment request"));
+    openAction->setStatusTip(tr("Open a ProjectCoin: URI or payment request"));
 
     openBlockExplorerAction = new QAction(QIcon(":/icons/blockexplorer"), "", this);
     openBlockExplorerAction->setStatusTip(tr("Blockchain explorer"));
@@ -480,7 +480,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 
     showHelpMessageAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("&Command-line options"), this);
     showHelpMessageAction->setMenuRole(QAction::NoRole);
-    showHelpMessageAction->setStatusTip(tr("Show the XDNA Core help message to get a list with possible XDNA command-line options"));
+    showHelpMessageAction->setStatusTip(tr("Show the ProjectCoin Core help message to get a list with possible ProjectCoin command-line options"));
 
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutClicked()));
@@ -694,7 +694,7 @@ void BitcoinGUI::createTrayIcon(const NetworkStyle* networkStyle)
 {
 #ifndef Q_OS_MAC
     trayIcon = new QSystemTrayIcon(this);
-    QString toolTip = tr("XDNA Core client") + " " + networkStyle->getTitleAddText();
+    QString toolTip = tr("ProjectCoin Core client") + " " + networkStyle->getTitleAddText();
     trayIcon->setToolTip(toolTip);
     trayIcon->setIcon(networkStyle->getAppIcon());
     trayIcon->show();
@@ -723,7 +723,7 @@ void BitcoinGUI::createTrayIconMenu()
 #endif
 
     // Configuration of the tray icon (or dock icon) icon menu
-   
+
     trayIconMenu->addAction(toggleHideAction);
      /*
     trayIconMenu->addSeparator();
@@ -941,7 +941,7 @@ void BitcoinGUI::setNumConnections(int count)
     }
     QIcon connectionItem = QIcon(icon).pixmap(32, 32);
     labelConnectionsIcon->setIcon(connectionItem);
-    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to XDNA network", "", count));
+    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to ProjectCoin network", "", count));
 }
 
 void BitcoinGUI::updateSyncAnimation()
@@ -954,7 +954,7 @@ if (!masternodeSync.IsBlockchainSynced() || !masternodeSync.IsSynced())
                                            .pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
             spinnerFrame = (spinnerFrame + 1) % SPINNER_FRAMES;
 }
-else   disconnect(synctimer, SIGNAL(timeout()), 0, 0);    
+else   disconnect(synctimer, SIGNAL(timeout()), 0, 0);
 }
 
 void BitcoinGUI::setNumBlocks(int count)
@@ -1004,7 +1004,7 @@ void BitcoinGUI::setNumBlocks(int count)
         } else {
             int nAttempt;
             int progress = 0;
-            
+
 #ifdef ENABLE_WALLET
             if (walletFrame)
                 walletFrame->showOutOfSyncWarning(false);
@@ -1048,7 +1048,7 @@ void BitcoinGUI::setNumBlocks(int count)
         progressBar->setVisible(true);
 
         tooltip = tr("Catching up...") + QString("<br>") + tooltip;
-                
+
         prevBlocks = count;
 
 #ifdef ENABLE_WALLET
@@ -1072,7 +1072,7 @@ void BitcoinGUI::setNumBlocks(int count)
 
 void BitcoinGUI::message(const QString& title, const QString& message, unsigned int style, bool* ret)
 {
-    QString strTitle = tr("XDNA Core"); // default title
+    QString strTitle = tr("ProjectCoin Core"); // default title
     // Default to information icon
     int nMBoxIcon = QMessageBox::Information;
     int nNotifyIcon = Notificator::Information;
@@ -1097,7 +1097,7 @@ void BitcoinGUI::message(const QString& title, const QString& message, unsigned 
             break;
         }
     }
-    // Append title to "XDNA - "
+    // Append title to "ProjectCoin - "
     if (!msgType.isEmpty())
         strTitle += " - " + msgType;
 

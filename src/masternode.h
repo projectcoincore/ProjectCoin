@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The XDNA Core developers
+// Copyright (c) 2018-2019 The ProjectCoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -19,8 +19,8 @@
 #define MASTERNODE_MIN_MNP_SECONDS (4 * 60)
 #define MASTERNODE_MIN_MNB_SECONDS (5 * 60)
 #define MASTERNODE_PING_SECONDS (4 * 60)
-#define MASTERNODE_EXPIRATION_SECONDS (9 * 60)
-#define MASTERNODE_REMOVAL_SECONDS (10 * 60)
+#define MASTERNODE_EXPIRATION_SECONDS (120 * 60)
+#define MASTERNODE_REMOVAL_SECONDS (130 * 60)
 #define MASTERNODE_CHECK_SECONDS 5
 
 using namespace std;
@@ -102,7 +102,7 @@ public:
 };
 
 //
-// The Masternode Class. For managing the Obfuscation process. It contains the input of the (1000, 5000, 10000) XDNA, signature to prove
+// The Masternode Class. For managing the Obfuscation process. It contains the input of the (1000, 5000, 10000) ProjectCoin, signature to prove
 // it's the one who own that ip address and code for calculating the payment election.
 //
 class CMasternode
@@ -142,8 +142,8 @@ public:
     int64_t nLastDsq; //the dsq count from the last dsq broadcast of this node
     CMasternodePing lastPing;
 
-    static unsigned Level(CAmount vin_val);
-    static unsigned Level(const CTxIn& vin);
+    static unsigned Level(CAmount vin_val, int blockHeight);
+    static unsigned Level(const CTxIn& vin, int blockHeight);
 
     static bool IsDepositCoins(CAmount);
     static bool IsDepositCoins(const CTxIn& vin, CAmount& vin_val);
@@ -274,7 +274,7 @@ public:
 
     unsigned Level()
     {
-        return Level(deposit);
+        return Level(deposit, chainActive.Height());
     }
 
     int64_t GetLastPaid();

@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The XDNA Core developers
+// Copyright (c) 2018-2019 The ProjectCoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,6 +10,7 @@
 #include "obfuscation.h"
 #include "sync.h"
 #include "util.h"
+#include "spork.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -303,30 +304,92 @@ bool CMasternode::IsValidNetAddr()
            (IsReachable(addr) && addr.IsRoutable());
 }
 
-unsigned CMasternode::Level(CAmount vin_val)
+unsigned CMasternode::Level(CAmount vin_val, int blockHeight)
 {
-    switch(vin_val) {
-        case 1000  * COIN: return 1;
-        case 3000  * COIN: return 2;
-        case 5000 * COIN: return 3;
+    if (blockHeight >= 0 && blockHeight < 2000) {
+      switch(vin_val) {
+          case 250 * COIN: return 1;
+          case 500 * COIN: return 2;
+          case 1000 * COIN: return 3;
+      }
+    } else if (blockHeight >= 2000 && blockHeight < 10000) {
+      switch(vin_val) {
+          case 500 * COIN: return 1;
+          case 1000 * COIN: return 2;
+          case 1500 * COIN: return 3;
+      }
+    } else if (blockHeight >= 10000 && blockHeight < 30000) {
+      switch(vin_val) {
+          case 1000 * COIN: return 1;
+          case 1500 * COIN: return 2;
+          case 3000 * COIN: return 3;
+      }
+    } else if (blockHeight >= 30000 && blockHeight < 60000) {
+      switch(vin_val) {
+          case 1500 * COIN: return 1;
+          case 3000 * COIN: return 2;
+          case 4000 * COIN: return 3;
+      }
+    } else if (blockHeight >= 60000 && blockHeight < 100000) {
+      switch(vin_val) {
+          case 3000 * COIN: return 1;
+          case 4000 * COIN: return 2;
+          case 6000 * COIN: return 3;
+      }
+    } else if (blockHeight >= 100000 && blockHeight < 180000) {
+      switch(vin_val) {
+          case 4000 * COIN: return 1;
+          case 6000 * COIN: return 2;
+          case 8000 * COIN: return 3;
+      }
+    } else if (blockHeight >= 180000 && blockHeight < 300000) {
+      switch(vin_val) {
+          case 6000 * COIN: return 1;
+          case 8000 * COIN: return 2;
+          case 10000 * COIN: return 3;
+      }
+    } else if (blockHeight >= 300000 && blockHeight < 500000) {
+      switch(vin_val) {
+          case 8000 * COIN: return 1;
+          case 10000 * COIN: return 2;
+          case 15000 * COIN: return 3;
+      }
+    } else if (blockHeight >= 500000 && blockHeight < 750000) {
+      switch(vin_val) {
+          case 10000 * COIN: return 1;
+          case 15000 * COIN: return 2;
+          case 25000 * COIN: return 3;
+      }
+    } else if (blockHeight >= 750000 && blockHeight < 1250000) {
+      switch(vin_val) {
+          case 15000 * COIN: return 1;
+          case 25000 * COIN: return 2;
+          case 50000 * COIN: return 3;
+      }
+    } else {
+      switch(vin_val) {
+          case 25000 * COIN: return 1;
+          case 50000 * COIN: return 2;
+          case 75000 * COIN: return 3;
+      }
     }
 
     return 0;
 }
 
-unsigned CMasternode::Level(const CTxIn& vin)
+unsigned CMasternode::Level(const CTxIn& vin, int blockHeight)
 {
     CAmount vin_val;
 
     if(!IsDepositCoins(vin, vin_val))
         return LevelValue::UNSPECIFIED;
 
-    return Level(vin_val);
+    return Level(vin_val, blockHeight);
 }
 
 bool CMasternode::IsDepositCoins(CAmount vin_val)
 {
-    return Level(vin_val);
+    return Level(vin_val, chainActive.Height());
 }
 
 bool CMasternode::IsDepositCoins(const CTxIn& vin, CAmount& vin_val)
@@ -650,13 +713,13 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
     }
 
     // verify that sig time is legit in past
-    // should be at least not earlier than block when 1000 XDNA tx got MASTERNODE_MIN_CONFIRMATIONS
+    // should be at least not earlier than block when 1000 ProjectCoin tx got MASTERNODE_MIN_CONFIRMATIONS
     uint256 hashBlock = 0;
     CTransaction tx2;
     GetTransaction(vin.prevout.hash, tx2, hashBlock, true);
     BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
     if (mi != mapBlockIndex.end() && mi->second) {
-        CBlockIndex* pMNIndex = mi->second;                                                        // block for 1000 XDNA tx -> 1 confirmation
+        CBlockIndex* pMNIndex = mi->second;                                                        // block for 1000 ProjectCoin tx -> 1 confirmation
         CBlockIndex* pConfIndex = chainActive[pMNIndex->nHeight + MASTERNODE_MIN_CONFIRMATIONS - 1]; // block where tx got MASTERNODE_MIN_CONFIRMATIONS
         if (pConfIndex->GetBlockTime() > sigTime) {
             LogPrintf("mnb - Bad sigTime %d for Masternode %s (%i conf block is at %d)\n",
@@ -773,6 +836,10 @@ bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled)
 
     // see if we have this Masternode
     CMasternode* pmn = mnodeman.Find(vin);
+    if (pmn != NULL){
+    LogPrintf("Masternode.cpp my pmn address = %s\n", pmn->addr.ToString());
+    }else {LogPrintf("Masternode.cpp my pmn == NULL so vin = %s\n", vin.prevout.hash.ToString());}
+
     if (pmn != NULL && pmn->protocolVersion >= masternodePayments.GetMinMasternodePaymentsProto()) {
         if (fRequireEnabled && !pmn->IsEnabled()) return false;
 
@@ -813,6 +880,13 @@ bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled)
             uint256 hash = mnb.GetHash();
             if (mnodeman.mapSeenMasternodeBroadcast.count(hash)) {
                 mnodeman.mapSeenMasternodeBroadcast[hash].lastPing = *this;
+            }
+
+            if (IsSporkActive(SPORK_7_MN_REBROADCAST_ENFORCEMENT)) {
+            //dirty hack //
+            pmn->UpdateFromNewBroadcast(mnb);
+            mnb.Relay();
+            //////////////
             }
 
             pmn->Check(true);

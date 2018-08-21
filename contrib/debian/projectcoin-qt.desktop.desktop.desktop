@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=ProjectCoin
+Comment=ProjectCoin P2P Cryptocurrency
+Exec=projectcoin-qt %u
+Terminal=false
+Type=Application
+Icon=projectcoin128
+MimeType=x-scheme-handler/projectcoin;
+Categories=Office;Finance;
+Name[ru]=projectcoin-qt.desktop.desktop

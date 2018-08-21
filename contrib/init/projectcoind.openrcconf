@@ -1,0 +1,26 @@
+# /etc/conf.d/projectcoind: config file for /etc/init.d/projectcoind
+
+# Config file location
+#BITCOIND_CONFIGFILE="/etc/projectcoin/projectcoin.conf"
+
+# What directory to write pidfile to?  (created and owned by $BITCOIND_USER)
+#BITCOIND_PIDDIR="/var/run/projectcoind"
+
+# What filename to give the pidfile
+#BITCOIND_PIDFILE="${BITCOIND_PIDDIR}/projectcoind.pid"
+
+# Where to write projectcoind data (be mindful that the blockchain is large)
+#BITCOIND_DATADIR="/var/lib/projectcoind"
+
+# User and group to own projectcoind process
+#BITCOIND_USER="projectcoin"
+#BITCOIND_GROUP="projectcoin"
+
+# Path to projectcoind executable
+#BITCOIND_BIN="/usr/bin/projectcoind"
+
+# Nice value to run projectcoind under
+#BITCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+BITCOIND_OPTS=""

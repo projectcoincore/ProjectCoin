@@ -1,20 +1,20 @@
 
 Debian
 ====================
-This directory contains files used to package xdnad/xdna-qt
-for Debian-based Linux systems. If you compile xdnad/xdna-qt yourself, there are some useful files here.
+This directory contains files used to package projectcoind/projectcoin-qt
+for Debian-based Linux systems. If you compile projectcoind/projectcoin-qt yourself, there are some useful files here.
 
-## xdna: URI support ##
+## projectcoin: URI support ##
 
 
-xdna-qt.desktop  (Gnome / Open Desktop)
+projectcoin-qt.desktop  (Gnome / Open Desktop)
 To install:
 
-	sudo desktop-file-install xdna-qt.desktop
+	sudo desktop-file-install projectcoin-qt.desktop
 	sudo update-desktop-database
 
 If you build yourself, you will either need to modify the paths in
-the .desktop file or copy or symlink your xdnaqt binary to `/usr/bin`
-and the `../../share/pixmaps/xdna128.png` to `/usr/share/pixmaps`
+the .desktop file or copy or symlink your projectcoinqt binary to `/usr/bin`
+and the `../../share/pixmaps/projectcoin128.png` to `/usr/share/pixmaps`
 
-xdna-qt.protocol (KDE)
+projectcoin-qt.protocol (KDE)
