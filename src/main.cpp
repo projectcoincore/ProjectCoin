@@ -1641,16 +1641,16 @@ CAmount GetBlockValue(int nHeight)
       nSubsidy = 30 * COIN;
     } else if (nHeight > 100000 && nHeight <= 180000) {
       nSubsidy = 50 * COIN;
-    } else if (nHeight > 180000 && nHeight <= 300000) {
+    } else if (nHeight > 180000 && nHeight <= 250000) {
       nSubsidy = 25 * COIN;
-    } else if (nHeight > 300000 && nHeight <= 500000) {
-      nSubsidy = 13 * COIN;
+    } else if (nHeight > 250000 && nHeight <= 500000) { // soft fork
+      nSubsidy = 140 * COIN;
     } else if (nHeight > 500000 && nHeight <= 750000) {
-      nSubsidy = 7 * COIN;
+      nSubsidy = 70 * COIN;
     } else if (nHeight > 750000 && nHeight <= 1250000) {
-      nSubsidy = 4 * COIN;
-    } else if (nHeight > 1250000 && nHeight <= 3000000) {
       nSubsidy = 2 * COIN;
+    } else if (nHeight > 1250000 && nHeight <= 3000000) {
+      nSubsidy = 1 * COIN;
     } else {
       nSubsidy = 0.1 * COIN;
     }
@@ -1672,16 +1672,30 @@ int64_t GetMasternodePayment(int nHeight, unsigned mnlevel, int64_t blockValue)
     if (nHeight <= Params().StartMNPaymentsBlock())
         return 0;
 
-    switch(mnlevel)
-    {
-        case 1:
-            return blockValue * 0.3;
+    if (nHeight > 250000) {
+      switch(mnlevel)
+      {
+          case 1:
+              return blockValue * 0.15;
 
-        case 2:
-            return blockValue * 0.3;
+          case 2:
+              return blockValue * 0.25;
 
-        case 3:
-            return blockValue * 0.3;
+          case 3:
+              return blockValue * 0.3;
+      }
+    } else {
+      switch(mnlevel)
+      {
+          case 1:
+              return blockValue * 0.3;
+
+          case 2:
+              return blockValue * 0.3;
+
+          case 3:
+              return blockValue * 0.3;
+      }
     }
 
     return 0;

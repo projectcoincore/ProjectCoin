@@ -115,7 +115,7 @@ public:
         // nAntiInstamineTime = 50; // 720 blocks with 1 reward for instamine prevention
         nMaturity = 228;
         nMasternodeCountDrift = 3;
-        nMaxMoneyOut = 21000000 * COIN;
+        nMaxMoneyOut = 80000000 * COIN;
 
         nStartMasternodePaymentsBlock = 200;
 

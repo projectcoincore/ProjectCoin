@@ -342,35 +342,35 @@ unsigned CMasternode::Level(CAmount vin_val, int blockHeight)
           case 6000 * COIN: return 2;
           case 8000 * COIN: return 3;
       }
-    } else if (blockHeight >= 180000 && blockHeight < 300000) {
+    } else if (blockHeight >= 180000 && blockHeight < 250000) {
       switch(vin_val) {
           case 6000 * COIN: return 1;
           case 8000 * COIN: return 2;
           case 10000 * COIN: return 3;
       }
-    } else if (blockHeight >= 300000 && blockHeight < 500000) {
+    } else if (blockHeight >= 250000 && blockHeight < 500000) {
       switch(vin_val) {
-          case 8000 * COIN: return 1;
-          case 10000 * COIN: return 2;
-          case 15000 * COIN: return 3;
+          case 80000 * COIN: return 1;
+          case 100000 * COIN: return 2;
+          case 150000 * COIN: return 3;
       }
     } else if (blockHeight >= 500000 && blockHeight < 750000) {
       switch(vin_val) {
-          case 10000 * COIN: return 1;
-          case 15000 * COIN: return 2;
-          case 25000 * COIN: return 3;
+          case 100000 * COIN: return 1;
+          case 150000 * COIN: return 2;
+          case 200000 * COIN: return 3;
       }
     } else if (blockHeight >= 750000 && blockHeight < 1250000) {
       switch(vin_val) {
-          case 15000 * COIN: return 1;
-          case 25000 * COIN: return 2;
-          case 50000 * COIN: return 3;
+          case 150000 * COIN: return 1;
+          case 200000 * COIN: return 2;
+          case 250000 * COIN: return 3;
       }
     } else {
       switch(vin_val) {
-          case 25000 * COIN: return 1;
-          case 50000 * COIN: return 2;
-          case 75000 * COIN: return 3;
+          case 200000 * COIN: return 1;
+          case 250000 * COIN: return 2;
+          case 300000 * COIN: return 3;
       }
     }
 
