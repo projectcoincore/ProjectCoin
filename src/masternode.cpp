@@ -838,7 +838,9 @@ bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled)
     CMasternode* pmn = mnodeman.Find(vin);
     if (pmn != NULL){
     //LogPrintf("Masternode.cpp my pmn address = %s\n", pmn->addr.ToString());
-    }else {LogPrintf("Masternode.cpp my pmn == NULL so vin = %s\n", vin.prevout.hash.ToString());}
+    }else {
+      //LogPrintf("Masternode.cpp my pmn == NULL so vin = %s\n", vin.prevout.hash.ToString());
+    }
 
     if (pmn != NULL && pmn->protocolVersion >= masternodePayments.GetMinMasternodePaymentsProto()) {
         if (fRequireEnabled && !pmn->IsEnabled()) return false;

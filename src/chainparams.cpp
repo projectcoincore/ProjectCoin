@@ -55,13 +55,13 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
 static Checkpoints::MapCheckpoints mapCheckpoints =
     boost::assign::map_list_of
     (0, uint256("00000e47ef24152e38027ee3c18968bbca8eaedf0fb1030e2b924b0d32014d8d"))
-    (223377, uint256("3e2da227f97e824fdc570b87e55fa7c167cfa68ced2f8b592198ba5fb65321e7"))
+    (245900, uint256("ec2f3f120bfbaf267c803c5dba8ce999775238b464cf6c6aee1398a9fe11bcbe"))
                               ;
 
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
-    1548459054, // * UNIX timestamp of last checkpoint block
-    518102,          // * total number of transactions between genesis and last checkpoint
+    1549824796, // * UNIX timestamp of last checkpoint block
+    565587,          // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
     2000        // * estimated number of transactions per day after checkpoint
 };
@@ -155,6 +155,7 @@ public:
         vSeeds.push_back(CDNSSeedData("seed1.projectcoin.net", "seed1.projectcoin.net"));     // Primary DNS Seeder
         vSeeds.push_back(CDNSSeedData("seed2.projectcoin.net", "seed2.projectcoin.net"));     // Primary DNS Seeder
         vSeeds.push_back(CDNSSeedData("seed3.projectcoin.net", "seed3.projectcoin.net"));     // Primary DNS Seeder
+        vSeeds.push_back(CDNSSeedData("seeder.projectcoin.net", "seeder.projectcoin.net"));     // seeder.projectcoin.net
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 55); // P
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 8);
