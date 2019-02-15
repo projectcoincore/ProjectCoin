@@ -281,7 +281,7 @@ public:
 
     bool updateState(CValidationState& state, bool ret)
     {
-        // No Blocks
+        // No Blocks //
         size_t size = points.size();
         if(size == 0)
             return ret;
@@ -369,6 +369,7 @@ struct CNodeState {
     bool fPreferredDownload;
 
     CNodeBlocks nodeBlocks;
+    
 
     CNodeState()
     {
@@ -3651,6 +3652,7 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, CBlock* pblock, CDis
         }
 
         if (pfrom && GetBoolArg("-blockspamfilter", DEFAULT_BLOCK_SPAM_FILTER)) {
+
           if (pindex->nHeight > DEFAULT_BLOCK_SPAM_START && IsSporkActive(SPORK_8_PATCH_ENFORCEMENT)) {
                     CNodeState *nodestate = State(pfrom->GetId());
                     BlockMap::iterator mi = mapBlockIndex.find(pblock->hashPrevBlock);
