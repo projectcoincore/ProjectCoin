@@ -369,7 +369,7 @@ struct CNodeState {
     bool fPreferredDownload;
 
     CNodeBlocks nodeBlocks;
-    
+
 
     CNodeState()
     {
@@ -3653,7 +3653,7 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, CBlock* pblock, CDis
 
         if (pfrom && GetBoolArg("-blockspamfilter", DEFAULT_BLOCK_SPAM_FILTER)) {
 
-          if (pindex->nHeight > DEFAULT_BLOCK_SPAM_START && IsSporkActive(SPORK_8_PATCH_ENFORCEMENT)) {
+          if (chainActive.Height() > DEFAULT_BLOCK_SPAM_START && IsSporkActive(SPORK_8_PATCH_ENFORCEMENT)) {
                     CNodeState *nodestate = State(pfrom->GetId());
                     BlockMap::iterator mi = mapBlockIndex.find(pblock->hashPrevBlock);
                     // we already checked this isn't the end
