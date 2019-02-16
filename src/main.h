@@ -110,7 +110,7 @@ static const unsigned int DEFAULT_BLOCK_SPAM_FILTER_MAX_SIZE = COINBASE_MATURITY
 /** Default for -blockspamfiltermaxavg, maximum average size of an index occurrence in the block spam filter */
 static const unsigned int DEFAULT_BLOCK_SPAM_FILTER_MAX_AVG = 10;
 
-static const unsigned int DEFAULT_BLOCK_SPAM_START = 253400;
+static const unsigned int DEFAULT_BLOCK_SPAM_START = 254100;
 
 /** "reject" message codes */
 static const unsigned char REJECT_MALFORMED = 0x01;
