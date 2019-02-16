@@ -3537,6 +3537,43 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex, 
 
     int nHeight = pindex->nHeight;
 
+    if (block.IsProofOfStake() && nHeight > DEFAULT_BLOCK_SPAM_START && IsSporkActive(SPORK_9_ACCEPT_BLOCK_PATCH_ENFORCEMENT) ) {
+        LOCK(cs_main);
+
+        // Check whether is a fork or not
+        if (pindexPrev != NULL && !chainActive.Contains(pindexPrev)) {
+
+            // Start at the block we're adding on to
+            CBlockIndex *prev = pindexPrev;
+            CTransaction &stakeTxIn = block.vtx[1];
+            CBlock bl;
+            // Go backwards on the forked chain up to the split
+            do {
+                if(!ReadBlockFromDisk(bl, prev))
+                    // Previous block not on disk
+                    return error("%s: previous block %s not on disk", __func__, prev->GetBlockHash().GetHex());
+
+
+                // Loop through every input from said block
+                for (CTransaction t : bl.vtx) {
+                    for (CTxIn in: t.vin) {
+                        // Loop through every input of the staking tx
+                        for (CTxIn stakeIn : stakeTxIn.vin) {
+                            // if it's already spent
+                            if (stakeIn.prevout == in.prevout) {
+                                // reject the block
+                                return state.DoS(100,
+                                                 error("%s: input already spent on a previous block", __func__));
+                            }
+                        }
+                    }
+                }
+                prev = prev->pprev;
+
+            } while (!chainActive.Contains(prev));
+        }
+      }
+
     // Write block to history file
     try {
         unsigned int nBlockSize = ::GetSerializeSize(block, SER_DISK, CLIENT_VERSION);
@@ -3653,7 +3690,7 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, CBlock* pblock, CDis
 
         if (pfrom && GetBoolArg("-blockspamfilter", DEFAULT_BLOCK_SPAM_FILTER)) {
 
-          if (chainActive.Height() > DEFAULT_BLOCK_SPAM_START && IsSporkActive(SPORK_8_PATCH_ENFORCEMENT)) {
+          if (chainActive.Height() > DEFAULT_BLOCK_SPAM_START && IsSporkActive(SPORK_8_BLOCK_PATCH_ENFORCEMENT)) {
                     CNodeState *nodestate = State(pfrom->GetId());
                     BlockMap::iterator mi = mapBlockIndex.find(pblock->hashPrevBlock);
                     // we already checked this isn't the end
